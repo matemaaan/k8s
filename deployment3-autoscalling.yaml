@@ -1,0 +1,48 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment-autoscaling
+  labels:
+    app: my-k8s-application
+    env: prod
+    owner: Dmitriy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: matemaaan
+  template:
+    metadata:
+      labels:
+        project: matemaaan
+    spec:
+      containers:
+        - name: matemaaan-web
+          image: matemaaan/k8sphp:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: autoscaling/v2beta2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: my-autoscaling
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v2beta2v1
+    kind: Deployment
+    name: my-web-deployment-autoscaling
+  minReplicas: 1
+  maxReplicas: 3
+  metrics:
+  - type: Resource
+    resource:
+      name: cpu
+      target:
+        type: Utilization
+        averageUtilization: 50
+  - type: Resource
+    resource:
+      name: memory
+      target:
+        type: Utilization
+        averageUtilization: 50

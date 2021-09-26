@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment-replicas
+  labels:
+    app: my-k8s-application
+    env: prod
+    owner: Dmitriy
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: mates
+  template:
+    metadata:
+      labels:
+        project: mates
+    spec:
+      containers:
+        - name: mates-web
+          image: adv4000/k8sphp:latest
+          ports:
+            - containerPort: 80
