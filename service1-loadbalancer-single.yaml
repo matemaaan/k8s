@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: my-web-deployment
+  labels:
+    app: my-k8s-deployment
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      project: mate
+  template:
+    metadata:
+      labels:
+        project: mate # Service look those PODS labels
+    spec:
+      containers:
+        - name: mate-web
+          image: matemaaan/k8sphp:latest
+          ports:
+            - containerPort: 80
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: my-single-container
+  labels:
+    env: prod
+    owner: DmitriyShirokov
+spec:
+  selector:
+    project: mate #Selecting PODS with those labels
+  ports:
+    - name: app-listener
+      protocol: TCP
+      port: 80 #POrt on load Balancer
+      targetPort : 80 #Port on POD
+  type: LoadBalancer
